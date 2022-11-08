@@ -10,15 +10,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,7 +33,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             ComposeLoginTheme {
+
                 Surface(modifier = Modifier.fillMaxSize()) {
                     LoginScreen(viewModel)
                 }
@@ -42,7 +47,6 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(viewModel: LoginViewModel) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -98,6 +102,8 @@ fun LoginScreen(viewModel: LoginViewModel) {
 
             Spacer(Modifier.height(20.dp))
 
+            //password
+            var passwordVisibility: Boolean by remember { mutableStateOf(false) }
             OutlinedTextField(
                 value = viewModel.state.password,
                 leadingIcon = {
@@ -107,7 +113,24 @@ fun LoginScreen(viewModel: LoginViewModel) {
                         tint = Color.Black
                     )
                 },
+
+                trailingIcon = {
+                    val visibilityImage = if (passwordVisibility)
+                        Icons.Filled.Visibility
+                    else Icons.Filled.VisibilityOff
+                    IconButton(onClick = {
+                        passwordVisibility = !passwordVisibility
+                    }) {
+                        Icon(
+                            imageVector = visibilityImage,
+                            contentDescription = null,
+                            tint = Color.Black
+                        )
+                    }
+                },
                 label = { Text(text = "Password") },
+               // visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
                 isError = viewModel.state.passwordError != null,

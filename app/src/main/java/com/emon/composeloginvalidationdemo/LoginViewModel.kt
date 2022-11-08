@@ -55,12 +55,12 @@ class LoginViewModel(
                         _uiStateEvent.send(LoginUiStateEvent.LoginSuccess)
 
                         uiState = uiState.copy(loading = false)
-                        state = state.copy(
+                       /* state = state.copy(
                             email = "",
                             password = "",
                             emailError = null,
                             passwordError = null
-                        )
+                        )*/
                     }
                 }
             }
