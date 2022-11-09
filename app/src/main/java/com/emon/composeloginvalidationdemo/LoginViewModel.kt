@@ -15,7 +15,6 @@ class LoginViewModel(
     val action: (LoginUiAction) -> Unit
 
     var state by mutableStateOf(Param())
-
     var uiState by mutableStateOf(LoginUiState.Loading(false))
 
     private val _uiStateEvent = Channel<LoginUiStateEvent<Any>>()
@@ -52,15 +51,15 @@ class LoginViewModel(
                     uiState = uiState.copy(loading = true)
                     viewModelScope.launch {
                         delay(5000)
-                        _uiStateEvent.send(LoginUiStateEvent.LoginSuccess)
+                        _uiStateEvent.send(LoginUiStateEvent.LoginSuccess("Login Success"))
 
                         uiState = uiState.copy(loading = false)
-                       /* state = state.copy(
-                            email = "",
-                            password = "",
-                            emailError = null,
-                            passwordError = null
-                        )*/
+                        /* state = state.copy(
+                             email = "",
+                             password = "",
+                             emailError = null,
+                             passwordError = null
+                         )*/
                     }
                 }
             }
@@ -79,7 +78,7 @@ class LoginViewModel(
     }
 
     sealed class LoginUiStateEvent<out R> {
-        object LoginSuccess : LoginUiStateEvent<Any>()
+        data class LoginSuccess(var message: String) : LoginUiStateEvent<Any>()
     }
 
     sealed class LoginUiAction {

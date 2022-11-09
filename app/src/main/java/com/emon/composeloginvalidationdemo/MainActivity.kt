@@ -33,9 +33,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             ComposeLoginTheme {
-
                 Surface(modifier = Modifier.fillMaxSize()) {
                     LoginScreen(viewModel)
                 }
@@ -55,15 +53,26 @@ fun LoginScreen(viewModel: LoginViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val context = LocalContext.current
-        LaunchedEffect(key1 = context) {
-            viewModel.uiStateEvent.collect {
-                when (it) {
-                    LoginViewModel.LoginUiStateEvent.LoginSuccess -> {
-                        Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT).show()
-                    }
-                }
+
+        val stateEvent by viewModel.uiStateEvent.collectAsState("")
+        when (stateEvent) {
+            is LoginViewModel.LoginUiStateEvent.LoginSuccess -> {
+                Toast.makeText(context,
+                    "" + (stateEvent as LoginViewModel.LoginUiStateEvent.LoginSuccess).message,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+
+        /* LaunchedEffect(key1 = context) {
+             viewModel.uiStateEvent.collect {
+                 when (it) {
+                     LoginViewModel.LoginUiStateEvent.LoginSuccess -> {
+                         Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT).show()
+                     }
+                 }
+             }
+         }*/
 
         if (viewModel.uiState.loading) {
             CircularProgressIndicator(
@@ -129,7 +138,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
                     }
                 },
                 label = { Text(text = "Password") },
-               // visualTransformation = PasswordVisualTransformation(),
+                // visualTransformation = PasswordVisualTransformation(),
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
@@ -155,6 +164,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
                 onClick = {
                     viewModel.action(LoginViewModel.LoginUiAction.Login)
                 },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp), shape = MaterialTheme.shapes.medium
